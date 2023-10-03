@@ -35,7 +35,7 @@ HTTPClient http;
 WiFiClient client;
 string data_httppost="\"name_seri\":\"IB06_916b\"";
 String http_respone="";
-const char* serverName = "http://10.0.70.77/test3.php";
+const char* serverName = "http://10.0.70.20/test3.php";
 //
 static SemaphoreHandle_t xSemaphores = NULL;
 int request_post=0;
@@ -101,8 +101,6 @@ void ouput_user_set_string(string data){
       }
   }
   Serial.println(data.c_str());
-  //if(output_user_status[0]==1) output_user_status[0]=0;
-  //else output_user_status[0]=1;
 }
 void output_table(string data){
   static string_Iv2 data1;
@@ -128,12 +126,9 @@ void output_table(string data){
       }else{
         data2.detect(data2.data1[1],"~","=","~");
         my_module[is_have].output_user.resize(data2.data1.size());
-        //cout<<"output "<<my_module[is_have].name<<":\n";
         for(int k=0;k<data2.data1.size();k++){
           my_module[is_have].output_user[k]=stoi(data2.data2[k]);
-          //cout<<"out"<<to_string(k)<<":"<<my_module[is_have].output_user[k]<<"\t";
         }
-        //cout<<endl;
       }
   }
   
@@ -162,12 +157,9 @@ void input_table(string data){
       }else{
         data2.detect(data2.data1[1],"~","=","~");
         my_module[is_have].input_user.resize(data2.data1.size());
-        //cout<<"input "<<my_module[is_have].name<<":\n";
         for(int k=0;k<data2.data1.size();k++){
           my_module[is_have].input_user[k]=stoi(data2.data2[k]);
-          //cout<<"in"<<to_string(k)<<":"<<my_module[is_have].input_user[k]<<"\t";
         }
-        //cout<<endl;
       }
   }
   
@@ -206,22 +198,22 @@ void update_output(){
   else digitalWrite(out7,LOW);
 }
 void update_input(){
-  if(digitalRead(in1)==HIGH) input_user_status[0]=0;
-  else input_user_status[0]=1;
-  if(digitalRead(in2)==HIGH) input_user_status[1]=0;
-  else input_user_status[1]=1;
-  if(digitalRead(in3)==HIGH) input_user_status[2]=0;
-  else input_user_status[2]=1;
-  if(digitalRead(in4)==HIGH) input_user_status[3]=0;
-  else input_user_status[3]=1;
-  if(digitalRead(in5)==HIGH) input_user_status[4]=0;
-  else input_user_status[4]=1;
-  if(digitalRead(in6)==HIGH) input_user_status[5]=0;
-  else input_user_status[5]=1;
-  if(digitalRead(in7)==HIGH) input_user_status[6]=0;
-  else input_user_status[6]=1;
-  if(digitalRead(in8)==HIGH) input_user_status[7]=0;
-  else input_user_status[7]=1;
+  if(digitalRead(in1)==HIGH) input_user_status[0]=1;
+  else input_user_status[0]=0;
+  if(digitalRead(in2)==HIGH) input_user_status[1]=1;
+  else input_user_status[1]=0;
+  if(digitalRead(in3)==HIGH) input_user_status[2]=1;
+  else input_user_status[2]=0;
+  if(digitalRead(in4)==HIGH) input_user_status[3]=1;
+  else input_user_status[3]=0;
+  if(digitalRead(in5)==HIGH) input_user_status[4]=1;
+  else input_user_status[4]=0;
+  if(digitalRead(in6)==HIGH) input_user_status[5]=1;
+  else input_user_status[5]=0;
+  if(digitalRead(in7)==HIGH) input_user_status[6]=1;
+  else input_user_status[6]=0;
+  if(digitalRead(in8)==HIGH) input_user_status[7]=1;
+  else input_user_status[7]=0;
 }
 //
 void mission_normalf(string msg){
@@ -307,44 +299,43 @@ void thread3(void *args)
     }
 }
 void http_post(){
-          if(request_post==1){
-            if ( xSemaphoreTake( xSemaphores, ( TickType_t ) 10 ) == pdTRUE ) {
-              request_post=0;
-              http.begin(client, serverName);
-              http.addHeader("Content-Type", "application/json");
-              request_string="{"+data_httppost+input_to_json()+output_to_json()+output_user_set_string_fesp_json()+frist_time_get_mission_json()+"}";
-              xSemaphoreGive( xSemaphores );
+  if(request_post==1){
+    if ( xSemaphoreTake( xSemaphores, ( TickType_t ) 10 ) == pdTRUE ) {
+      request_post=0;
+      http.begin(client, serverName);
+      http.addHeader("Content-Type", "application/json");
+      request_string="{"+data_httppost+input_to_json()+output_to_json()+output_user_set_string_fesp_json()+frist_time_get_mission_json()+"}";
+      xSemaphoreGive( xSemaphores );
+    }
+    httpResponseCode= http.POST(request_string.c_str());
+    if ( xSemaphoreTake( xSemaphores, ( TickType_t ) 10 ) == pdTRUE ) {
+       if(httpResponseCode==200){
+          http_respone = http.getString();
+        }else{
+          Serial.print("HTTP Response code: ");
+          Serial.println(httpResponseCode);
+        }
+        // Free resources
+        http.end();
+        //
+        if(http_respone!=""){
+            //Serial.println(http_respone.c_str());
+            JSONVar myObject = JSON.parse(http_respone);
+            JSONVar keys = myObject.keys();
+            for (int i = 0; i < keys.length(); i++) {
+                JSONVar value = myObject[keys[i]];
+                process_data((string)keys[i],(string)value);
             }
-            httpResponseCode= http.POST(request_string.c_str());
-            if ( xSemaphoreTake( xSemaphores, ( TickType_t ) 10 ) == pdTRUE ) {
-               if(httpResponseCode==200){
-                  http_respone = http.getString();
-                }else{
-                  Serial.print("HTTP Response code: ");
-                  Serial.println(httpResponseCode);
-                }
-                // Free resources
-                http.end();
-                //
-                if(http_respone!=""){
-                    //Serial.println(http_respone.c_str());
-                    JSONVar myObject = JSON.parse(http_respone);
-                    JSONVar keys = myObject.keys();
-                    for (int i = 0; i < keys.length(); i++) {
-                        JSONVar value = myObject[keys[i]];
-                        process_data((string)keys[i],(string)value);
-                    }
-                    http_respone="";
-                }
-                xSemaphoreGive( xSemaphores );
-            }
-          }
-
-        
-    
+            http_respone="";
+        }
+        xSemaphoreGive( xSemaphores );
+    }
+  }
 }
+//
 Scheduler scheduler;
 Task taskHttpPost(1000, TASK_FOREVER, &http_post);
+//
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -438,11 +429,5 @@ void loop() {
     wifi_reconnect=0;
     WiFi.reconnect();
   }
-  //
-  //if(Serial.available()) {
-  //  data=string(Serial.readString().c_str());
-  //  mission_normalf(data);
-  //}
-  //
   delay(10);   
 }
