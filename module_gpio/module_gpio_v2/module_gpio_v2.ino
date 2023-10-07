@@ -5,7 +5,7 @@
 #define out5    17
 #define out6    18
 #define out7    5
-#define out8    0
+#define out8    16
 
 #define in1   32
 #define in2   33
@@ -33,7 +33,7 @@ char * password="MarueiPRO&@1";
 static string data;
 HTTPClient http;
 WiFiClient client;
-string data_httppost="\"name_seri\":\"IB06_916b\"";
+string data_httppost="\"name_seri\":\"IB05_916b\"";
 String http_respone="";
 const char* serverName = "http://10.0.70.20/test3.php";
 //
@@ -196,6 +196,9 @@ void update_output(){
   //
   if(output_user_status[6]==1) digitalWrite(out7,HIGH);
   else digitalWrite(out7,LOW);
+  //
+  if(output_user_status[7]==1) digitalWrite(out8,HIGH);
+  else digitalWrite(out8,LOW);
 }
 void update_input(){
   if(digitalRead(in1)==HIGH) input_user_status[0]=1;
@@ -359,6 +362,7 @@ void setup() {
   pinMode(out5,OUTPUT);
   pinMode(out6,OUTPUT);
   pinMode(out7,OUTPUT);
+  pinMode(out8,OUTPUT);
   digitalWrite (out1,LOW);
   digitalWrite (out2,LOW);
   digitalWrite (out3,LOW);
@@ -366,6 +370,7 @@ void setup() {
   digitalWrite (out5,LOW);
   digitalWrite (out6,LOW);
   digitalWrite (out7,LOW);
+  digitalWrite (out8,LOW);
   xSemaphores = xSemaphoreCreateMutex();
 //  xTaskCreate(thread1, "thread1", 0xFFFF, NULL, 0, NULL);
 //  xTaskCreate(thread2, "thread2", 2048, NULL, 1, NULL);
