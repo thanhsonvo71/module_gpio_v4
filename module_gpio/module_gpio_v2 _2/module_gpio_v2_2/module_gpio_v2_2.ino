@@ -1,14 +1,14 @@
-#define out1    19
-#define out2    18
-#define out3    17
+#define out1    18
+#define out2    17
+#define out3    19
 #define out4    16
 #define out5    15
 #define out6    18
 #define out7    5
 #define out8    16
 
-#define in1   23
-#define in2   22
+#define in1   22
+#define in2   23
 #define in3   25
 #define in4   26
 #define in5   27
@@ -33,7 +33,7 @@ char * password="MarueiPRO&@1";
 static string data;
 HTTPClient http;
 WiFiClient client;
-string data_httppost="\"name_seri\":\"IB05_917b\"";
+string data_httppost="\"name_seri\":\"IB05_918b\"";
 String http_respone="";
 const char* serverName = "http://10.0.70.20/test3.php";
 //

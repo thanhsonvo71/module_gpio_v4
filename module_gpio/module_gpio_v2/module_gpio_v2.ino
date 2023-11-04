@@ -26,14 +26,14 @@
 #include "/home/hitech/Desktop/Son_setting/arduino/code/src/string_Iv2/string_Iv2.h"
 #include "/home/hitech/Desktop/Son_setting/arduino/code/src/stoi/stoi.h"
 #include "/home/hitech/Desktop/Son_setting/arduino/code/src/stof/stof.h"
-#include "/home/hitech/Desktop/Son_setting/arduino/code/src/mission/mission_init.h"
+//#include "/home/hitech/Desktop/Son_setting/arduino/code/src/mission/mission_init.h"
 // wifi to connect
 char * ssid="MVP_PRO";
 char * password="MarueiPRO&@1";
 static string data;
 HTTPClient http;
 WiFiClient client;
-string data_httppost="\"name_seri\":\"IB05_916b\"";
+string data_httppost="\"name_seri\":\"IB03_916b\"";
 String http_respone="";
 const char* serverName = "http://10.0.70.20/test3.php";
 //
@@ -343,6 +343,7 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   // network 
+  //while(1);
   WiFi.begin(ssid, password);
   http.setTimeout(2000);
   input_user_status.resize(num_input_gpio);
@@ -405,6 +406,7 @@ void loop() {
                   wifi_reconnect=1;
                   time_out_wifi=0;
               }
+              //Serial.println(time_out_wifi);
               time_num=millis();
           }
           // misssion here

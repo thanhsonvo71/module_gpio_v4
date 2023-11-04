@@ -59,7 +59,7 @@ String http_respone="";
 int frist_time_update=0;
 string date;
 // http var
-string data_httppost="\"name_seri\":\"WATCH_3\"";
+string data_httppost="\"name_seri\":\"WATCH_2\"";
 const char* serverName = "http://10.0.70.20/test3.php";
 int num_input_gpio=8,num_output_gpio=8;
 vector<int> input_user_status;
